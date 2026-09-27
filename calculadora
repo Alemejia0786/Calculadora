@@ -1,0 +1,236 @@
+.data
+
+titulo: .asciiz "\n================================\n       CALCULADORA MIPS\n================================\n"
+menu: .asciiz "1. Suma\n2. Resta\n3. Multiplicacion\n4. Division\n5. Salir\n================================\nSeleccione una opcion: "
+
+mensaje1: .asciiz "\nIngrese el primer numero: "
+mensaje2: .asciiz "Ingrese el segundo numero: "
+
+resultadoSuma: .asciiz "\nResultado de la suma: "
+resultadoResta: .asciiz "\nResultado de la resta: "
+resultadoMulti: .asciiz "\nResultado de la multiplicacion: "
+resultadoDiv: .asciiz "\nResultado de la division: "
+
+errorOpcion: .asciiz "\nOpcion no valida. Seleccione una opcion del 1 al 5.\n"
+errorDivision: .asciiz "\nError: no se puede dividir entre cero.\n"
+salir: .asciiz "\nPrograma finalizado.\n"
+
+.text
+.globl main
+
+main:
+
+inicio:
+
+    # Mostrar titulo
+    li $v0, 4
+    la $a0, titulo
+    syscall
+
+    # Mostrar menu
+    li $v0, 4
+    la $a0, menu
+    syscall
+
+    # Leer opcion
+    li $v0, 5
+    syscall
+
+    move $t0, $v0
+
+    # Comprobar opcion
+    beq $t0, 1, suma
+    beq $t0, 2, resta
+    beq $t0, 3, multiplicacion
+    beq $t0, 4, division
+    beq $t0, 5, finalizar
+
+    # Si no corresponde a ninguna opcion
+    li $v0, 4
+    la $a0, errorOpcion
+    syscall
+
+    j inicio
+
+
+# =================================
+# SUMA
+# =================================
+
+suma:
+
+    # Solicitar primer numero
+    li $v0, 4
+    la $a0, mensaje1
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+    # Solicitar segundo numero
+    li $v0, 4
+    la $a0, mensaje2
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t2, $v0
+
+    # Realizar suma
+    add $t3, $t1, $t2
+
+    # Mostrar resultado
+    li $v0, 4
+    la $a0, resultadoSuma
+    syscall
+
+    li $v0, 1
+    move $a0, $t3
+    syscall
+
+    j inicio
+
+
+# =================================
+# RESTA
+# =================================
+
+resta:
+
+    li $v0, 4
+    la $a0, mensaje1
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+    li $v0, 4
+    la $a0, mensaje2
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t2, $v0
+
+    # Realizar resta
+    sub $t3, $t1, $t2
+
+    # Mostrar resultado
+    li $v0, 4
+    la $a0, resultadoResta
+    syscall
+
+    li $v0, 1
+    move $a0, $t3
+    syscall
+
+    j inicio
+
+
+# =================================
+# MULTIPLICACION
+# =================================
+
+multiplicacion:
+
+    li $v0, 4
+    la $a0, mensaje1
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+    li $v0, 4
+    la $a0, mensaje2
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t2, $v0
+
+    # Realizar multiplicacion
+    mult $t1, $t2
+    mflo $t3
+
+    # Mostrar resultado
+    li $v0, 4
+    la $a0, resultadoMulti
+    syscall
+
+    li $v0, 1
+    move $a0, $t3
+    syscall
+
+    j inicio
+
+
+# =================================
+# DIVISION
+# =================================
+
+division:
+
+    li $v0, 4
+    la $a0, mensaje1
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t1, $v0
+
+    li $v0, 4
+    la $a0, mensaje2
+    syscall
+
+    li $v0, 5
+    syscall
+    move $t2, $v0
+
+    # Comprobar si el divisor es cero
+    beq $t2, $zero, error_division
+
+    # Realizar division
+    div $t1, $t2
+    mflo $t3
+
+    # Mostrar resultado
+    li $v0, 4
+    la $a0, resultadoDiv
+    syscall
+
+    li $v0, 1
+    move $a0, $t3
+    syscall
+
+    j inicio
+
+
+# =================================
+# ERROR DIVISION
+# =================================
+
+error_division:
+
+    li $v0, 4
+    la $a0, errorDivision
+    syscall
+
+    j inicio
+
+
+# =================================
+# FINALIZAR
+# =================================
+
+finalizar:
+
+    li $v0, 4
+    la $a0, salir
+    syscall
+
+    li $v0, 10
+    syscall
+
